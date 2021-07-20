@@ -14,11 +14,15 @@ class ArtistRepositoryImpl(
     private val artistLocalDataSource: ArtistLocalDataSource
 ) : ArtistRepository {
     override suspend fun getArtist(): List<Artist>? {
-        TODO("Not yet implemented")
+        return getArtistFromCache()
     }
 
     override suspend fun updateArtist(): List<Artist>? {
-        TODO("Not yet implemented")
+        val newListOfArtist = getArtistFromAPI()
+        artistLocalDataSource.clearAll()
+        artistLocalDataSource.saveArtistToDB(newListOfArtist)
+        artistCacheDataSource.saveArtistToCache(newListOfArtist)
+        return newListOfArtist
     }
 
     suspend fun getArtistFromAPI():List<Artist>{
